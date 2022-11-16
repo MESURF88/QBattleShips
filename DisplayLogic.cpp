@@ -1,17 +1,49 @@
 #include "DisplayLogic.hpp"
-#include "Player.hpp"
 #include <QDebug>
 
 DisplayLogic::DisplayLogic(QObject *parent) : QObject(parent)
 {
-
+    m_timer = new QTimer(this);
 }
 
 void DisplayLogic::startGame()
 {
-    Player playerInitiator;
-    Player playerInitiated;
-    qDebug() << "test";
+    qDebug("started");
+
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(processTheMove()));
+    m_timer->start(500);
+}
+
+void DisplayLogic::processTheMove()
+{
+    static int p1_turn = 1;
+    if ((_battleShipInitiator.getShipSpaces() < 1) ||
+        (_battleShipInitiated.getShipSpaces() < 1))
+    {
+        // find winner
+        m_timer->stop();
+        if (_battleShipInitiator.getShipSpaces() < _battleShipInitiated.getShipSpaces())
+        {
+            setSomeVar("Player 2 Wins! with " + QString::number(_battleShipInitiated.getShipSpaces()) + " spaces left");
+        }
+        else
+        {
+            setSomeVar("Player 1 Wins! with " + QString::number(_battleShipInitiator.getShipSpaces()) + " spaces left");
+        }
+    }
+    else
+    {
+        if (p1_turn)
+        {
+            _battleShipInitiated.shotAt();
+            p1_turn = 0;
+        }
+        else
+        {
+            _battleShipInitiator.shotAt();
+            p1_turn = 1;
+        }
+    }
 }
 
 QString DisplayLogic::someVar()

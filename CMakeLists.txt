@@ -29,17 +29,15 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick REQUIRED)
 
 set(PROJECT_HEADERS
         DisplayLogic.hpp
-        GameBoard.hpp
         GameBoardTest.hpp
-        Player.hpp
+        Ship.hpp
 )
 
 set(PROJECT_SOURCES
         DisplayLogic.cpp
-        GameBoard.cpp
         GameBoardTest.cpp
-        Player.cpp
         main.cpp
+        Ship.cpp
         qml.qrc
 )
 

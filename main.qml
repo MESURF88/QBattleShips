@@ -2,14 +2,15 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
-import gbt 1.0
 
 Window {
     id: root
-    width: 640
+    width: 840
     height: 480
     visible: true
     title: qsTr("BattleShips")
+
+    readonly property int statusRowMargin : 30
 
     Item
     {
@@ -21,107 +22,120 @@ Window {
             horizontalCenter: root.horizontalCenter
             top: root.top
         }
-        Button {
-            id: startGameButton
-            anchors
-            {
-                centerIn: statusRow
-                topMargin: 5
-            }
-            height: 30
-            width: 100
-            background: Rectangle {
-                color: "LightGreen"
-            }
+        RowLayout
+        {
+            id: rowArea
+            Button {
+                id: startGameButton
+                anchors
+                {
+                    topMargin: 5
+                }
+                height: 50
+                width: 100
+                background: Rectangle {
+                    color: "LightGreen"
+                }
 
-            text: qsTr("Start BattleShip Sim")
-            onClicked: dspl.startGame()
+                text: qsTr("Start BattleShip Sim")
+                onClicked: dspl.startGame()
+            }
+            Text {
+                height: 50
+                width: 100
+
+                id: winnerText
+                text: dspl.someVar
+            }
         }
     }
 
     Item {
         id: gameView
+        height: root.height - statusRow.height - statusRowMargin
         anchors
         {
             top: statusRow.bottom
             margins: 10
         }
-
-        Rectangle {
-        id: rect1View
-        width: cpu1view.width
-        height: cpu1view.height
-        border.color: "black"
-        border.width: 2
-        anchors {
-            left: root.left
-        }
-            Column
+            Rectangle {
+            id: rect1View
+            width: root.width/2
+            height: gameView.height
+            border.color: "black"
+            border.width: 2
+            anchors
             {
-                id: cpu1view
-                width: root.width/2
-                height: root.height - statusRow.height - 10
-                anchors {
-                    margins: 5
-                }
-                Row{
-                    Text {
-                        text: "CPU1 here"
-                    }
-                }
-                Row{
-                    GridView
-                    {
-
-                    }
-                }
+                left: root.left
             }
-        }
-        Rectangle {
-        id: rect2View
-        width: cpu2view.width
-        height: cpu2view.height
-        border.color: "black"
-        border.width: 2
-        anchors {
-            left: rect1View.right
-        }
-            Column
-            {
-                id: cpu2view
-                width: root.width/2
-                height: root.height - statusRow.height - 10
-                anchors {
-                    margins: 5
-                }
-                Row {
 
-                    Text {
-                        text: "CPU2 here"
-                    }
-                }
                 GridView {
-                    id: gridView
-                    width: cpu2view.width/4
-                    height: cpu2view.height/4
-                    model: GameBoardTest {}
+                    id: gridView1
+                    cellHeight: rect1View.width/10
+                    cellWidth: rect1View.width/10
+                    interactive: false
+                    anchors
+                    {
+                        fill: rect1View
+                    }
+                    model: dspl.listInitiator
 
-                    delegate: RowLayout {
-                        width: gridView.width
-
-                        TextField {
+                    delegate: Rectangle {
+                        id: delegate1Rect
+                        border.color: tcolor
+                        border.width: (tcolor === "blue") || (tcolor === "red")? 50 : 2
+                        width: gridView1.cellWidth -2
+                        height: gridView1.cellHeight -2
+                        Text {
                             text: model.name
-
-                            Layout.preferredWidth: 1
-                            Layout.fillWidth: true
-
-                            onAccepted: model.name = text
+                            anchors
+                            {
+                                verticalCenter: delegate1Rect.verticalCenter
+                                horizontalCenter: delegate1Rect.horizontalCenter
+                            }
                         }
                     }
                 }
+            }
 
+        Rectangle {
+        id: rect2View
+        width: root.width/2
+        height: gameView.height
+        border.color: "black"
+        border.width: 2
+        anchors
+        {
+            left: rect1View.right
+        }
+
+            GridView {
+                id: gridView2
+                cellHeight: rect2View.width/10
+                cellWidth: rect2View.width/10
+                interactive: false
+                anchors
+                {
+                    fill: rect2View
+                }
+                model: dspl.listInitiated
+
+                delegate: Rectangle {
+                    id: delegate2Rect
+                    border.color: tcolor
+                    border.width: (tcolor === "blue") || (tcolor === "red")? 50 : 2
+                    width: gridView2.cellWidth -2
+                    height: gridView2.cellHeight -2
+                    Text {
+                        text: name
+                        anchors
+                        {
+                            verticalCenter: delegate2Rect.verticalCenter
+                            horizontalCenter: delegate2Rect.horizontalCenter
+                        }
+                    }
                 }
             }
         }
-
+    }
 }

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QTimer>
 #include "GameBoardTest.hpp"
 
 class DisplayLogic : public QObject
@@ -26,12 +27,14 @@ signals:
     void listInitiatedChanged();
 
 public slots:
-
+    void processTheMove();
 protected:
     GameBoardTest _battleShipInitiator;
     GameBoardTest _battleShipInitiated;
 private:
+
     QString m_someVar;
+    QTimer *m_timer = nullptr;
 
 
 };
